@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Smoke Tests</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+</head>
+<body>
+<form method="POST" th:action="@{/save}" th:object="${ankiCardsDto}">
+    <table border="1px">
+        <thead>
+        <tr>
+            <th>Word</th>
+            <th>Transcription</th>
+            <th>Translate</th>
+            <th>Eng Example</th>
+            <th>Rus Example</th>
+            <th>Sound</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="ankiCard : ${ankiCards}">
+            <td th:text="${ankiCard.word}"></td>
+            <td th:text="${ankiCard.transcription}"></td>
+            <td th:text="${ankiCard.translation}"></td>
+            <td th:text="${ankiCard.examples.engExample}"></td>
+            <td th:text="${ankiCard.examples.engExample}"></td>
+            <td th:text="${ankiCard.soundURL}"></td>
+        </tr>
+        </tbody>
+    </table>
+    <br>
+    <input type="submit" value="Save">
+</form>
+</body>
+</html>

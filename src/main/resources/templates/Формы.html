@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<form action="/resultUser" method="POST">
+    <table>
+        <thead>
+        <tr>
+            <th>English word</th>
+            <th>Transcription</th>
+            <th>Translate</th>
+            <th>Eng example</th>
+            <th>Rus example</th>
+            <th>Sound</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                <label>
+                    <input name="engWord" type="text" value="family">
+                </label>
+            </td>
+            <td>
+                <label>
+                    <input name="transcription" type="text" value="ˈfæməlɪ">
+                </label>
+            </td>
+            <td>
+                <label>
+                    <input name="translation" type="text" value="семья, семейство">
+                </label>
+            </td>
+            <td>
+                <label>
+                    <select name="engExample">
+                        <option>
+                            Marisa's family's in Cuba, Boris' family...
+                        </option>
+                        <option>
+                            Business is business, family's family.
+                        </option>
+                        <option>
+                            Добавлю свой вариант
+                        </option>
+                    </select>
+                </label>
+            </td>
+            <td>
+                <label>
+                    <select name="rusExample" style="width: 250px">
+                        <option>
+                            Семья Марисы - на Кубе, семья Бориса...
+                        </option>
+                        <option>
+                            Работа - это работа, семья есть семья.
+                        </option>
+                        <option>
+                            Добавлю свой вариант
+                        </option>
+                    </select>
+                </label>
+            </td>
+            <td>
+                <label>
+                    <input name="sound" type="text" value="[sound:https://wooordhunt.ru/data/sound/sow/uk/family.mp3]">
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>
+                    <input name="engWord" type="text" value="dasdadsdasdasd">
+                </label>
+            </td>
+            <td>
+                <label>
+                    <input name="transcription" type="text" value="ˈfæməlɪ">
+                </label>
+            </td>
+            <td>
+                <label>
+                    <input name="translate" type="text" value="семья, семейство">
+                </label>
+            </td>
+            <td>
+                <label>
+                    <select name="engExample">
+                        <option>
+                            Marisa's family's in Cuba, Boris' family...
+                        </option>
+                        <option>
+                            Business is business, family's family.
+                        </option>
+                        <option>
+                            Добавлю свой вариант
+                        </option>
+                    </select>
+                </label>
+            </td>
+            <td>
+                <label>
+                    <select name="rusExample" style="width: 250px">
+                        <option>
+                            Семья Марисы - на Кубе, семья Бориса...
+                        </option>
+                        <option>
+                            Работа - это работа, семья есть семья.
+                        </option>
+                        <option>
+                            Добавлю свой вариант
+                        </option>
+                    </select>
+                </label>
+            </td>
+            <td>
+                <label>
+                    <input name="sound" type="text" value="[sound:https://wooordhunt.ru/data/sound/sow/uk/family.mp3]">
+                </label>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <br>
+    <input type="submit" value="Обработать">
+</form>
+</body>
+</html>
