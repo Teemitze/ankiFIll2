@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 </head>
 <body>
-<form method="POST" th:action="@{/save}" th:object="${ankiCardsDto}">
+<form method="POST" th:action="@{/save}" th:object="${ankiCardsList}">
     <table border="1px">
         <thead>
         <tr>
@@ -21,9 +21,30 @@
         <tr th:each="ankiCard : ${ankiCards}">
             <td th:text="${ankiCard.word}"></td>
             <td th:text="${ankiCard.transcription}"></td>
-            <td th:text="${ankiCard.translation}"></td>
-            <td th:text="${ankiCard.examples.engExample}"></td>
-            <td th:text="${ankiCard.examples.engExample}"></td>
+            <td>
+                <label>
+                    <input th:value="${ankiCard.translation}"/>
+                </label>
+            </td>
+            <td>
+                <label>
+                    <select>
+                        <option th:each="example : ${ankiCard.examples}">
+                            <p th:text="${example.engExample}"></p>
+                        </option>
+                    </select>
+                </label>
+            </td>
+
+            <td>
+                <label>
+                    <select>
+                        <option th:each="example : ${ankiCard.examples}">
+                            <p th:text="${example.rusExample}"></p>
+                        </option>
+                    </select>
+                </label>
+            </td>
             <td th:text="${ankiCard.soundURL}"></td>
         </tr>
         </tbody>

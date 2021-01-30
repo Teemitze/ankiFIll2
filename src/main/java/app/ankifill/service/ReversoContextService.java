@@ -5,25 +5,26 @@ import lombok.SneakyThrows;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.springframework.stereotype.Service;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
+@Service
 public class ReversoContextService {
 
-    public Examples getExamples(String word) {
+    @SneakyThrows
+    public List<Examples> getExamples(String word) {
         final Document doc;
-        try {
-            doc = Jsoup.connect("https://context.reverso.net/перевод/английский-русский/" + word).get();
-            final Element elementWithExample = getFirstExampleElement(doc);
-            return new Examples(parseEngExample(elementWithExample), parseRusExample(elementWithExample));
-        } catch (IOException e) {
-            return new Examples(null, null);
-        }
+        doc = Jsoup.connect("https://context.reverso.net/перевод/английский-русский/" + word).get();
+        final List<Element> elementsWithExample = getExamplesElement(doc);
+        return elementsWithExample.stream().map(e -> new Examples(parseEngExample(e), parseRusExample(e))).collect(Collectors.toList());
     }
 
 
-    private Element getFirstExampleElement(Document doc) {
-        return doc.getElementsByClass("example").first();
+    private List<Element> getExamplesElement(Document doc) {
+        return new ArrayList<>(doc.getElementsByClass("example"));
     }
 
     private String parseEngExample(Element element) {

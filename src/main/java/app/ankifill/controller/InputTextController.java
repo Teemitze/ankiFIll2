@@ -1,6 +1,8 @@
 package app.ankifill.controller;
 
 import app.ankifill.model.AnkiCard;
+import app.ankifill.model.AnkiCardDto;
+import app.ankifill.model.AnkiCardsList;
 import app.ankifill.model.Examples;
 import app.ankifill.service.LingualeoClient;
 import app.ankifill.service.ReversoContextService;
@@ -10,14 +12,13 @@ import lombok.SneakyThrows;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
@@ -29,30 +30,28 @@ public class InputTextController {
 
     private final LingualeoClient lingualeoClient;
 
-    List<AnkiCard> ankiCards = new ArrayList<>();
+    List<AnkiCardDto> ankiCardsDto = new ArrayList<>();
 
     @PostMapping("/words")
     @SneakyThrows
     public void inputText(String text, HttpServletResponse response) {
-        Set<String> words = text.lines().map(String::trim).collect(Collectors.toSet());
+        List<String> words = text.lines().map(String::toLowerCase)
+                .map(String::trim)
+                .map(w -> w.replaceAll(" ", ""))
+                .distinct()
+                .collect(Collectors.toList());
 
 
         for (String word : words) {
             System.out.println(word);
-            AnkiCard ankiCard = wooordHuntService.fillAnkiCard(word);
+            AnkiCardDto ankiCardDto = wooordHuntService.fillAnkiCard(word);
 
-            if (checkAnkiNull(ankiCard)) {
-                ankiCard = lingualeoClient.fillAnkiCard(word);
+
+            if (checkAnkiNull(ankiCardDto)) {
+                ankiCardDto = lingualeoClient.fillAnkiCard(word);
             }
 
-            if (ankiCard.getExamples() == null || ankiCard.getExamples().getRusExample() == null
-                    || ankiCard.getExamples().getEngExample() == null) {
-                Examples examples = new ReversoContextService().getExamples(word);
-                ankiCard.setExamples(examples);
-            }
-
-
-            ankiCards.add(ankiCard);
+            ankiCardsDto.add(ankiCardDto);
         }
 
         response.sendRedirect("/result");
@@ -60,12 +59,18 @@ public class InputTextController {
 
     @GetMapping("/result")
     public String all(Model model) {
-        model.addAttribute("ankiCards", ankiCards);
+        model.addAttribute("ankiCards", ankiCardsDto);
         return "result";
     }
 
+    @PostMapping("/save")
+    public String save(@ModelAttribute AnkiCardsList ankiCardsList) {
 
-    private boolean checkAnkiNull(AnkiCard ankiCard) {
+        List<AnkiCardDto> ankiCards = ankiCardsList.getAnkiCards();
+        return "result";
+    }
+
+    private boolean checkAnkiNull(AnkiCardDto ankiCard) {
         return ankiCard.getTranslation() == null || ankiCard.getTranscription() == null || ankiCard.getSoundURL() == null;
     }
 

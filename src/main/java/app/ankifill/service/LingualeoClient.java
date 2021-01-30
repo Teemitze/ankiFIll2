@@ -2,6 +2,7 @@ package app.ankifill.service;
 
 
 import app.ankifill.model.AnkiCard;
+import app.ankifill.model.AnkiCardDto;
 import app.ankifill.utill.AnkiFillUtil;
 import lombok.SneakyThrows;
 import org.apache.http.HttpEntity;
@@ -15,10 +16,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class LingualeoClient {
 
-    public AnkiCard fillAnkiCard(String word) {
+    public AnkiCardDto fillAnkiCard(String word) {
         final JSONObject jsonObject = sendRequest(word);
 
-        final AnkiCard ankiCard = new AnkiCard();
+        final AnkiCardDto ankiCard = new AnkiCardDto();
         ankiCard.setWord(word);
         ankiCard.setTranscription(getTranscriptionFromJSON(jsonObject));
         ankiCard.setTranslation(getTranslationFromJSON(jsonObject));

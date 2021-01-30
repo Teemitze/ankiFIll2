@@ -9,5 +9,5 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class AnkiCardsList {
-    private List<AnkiCard> ankiCards = new ArrayList<>();
+    private List<AnkiCardDto> ankiCards = new ArrayList<>();
 }

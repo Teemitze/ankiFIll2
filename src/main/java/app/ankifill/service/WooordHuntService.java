@@ -1,8 +1,8 @@
 package app.ankifill.service;
 
-import app.ankifill.model.AnkiCard;
-import app.ankifill.model.Examples;
+import app.ankifill.model.AnkiCardDto;
 import app.ankifill.utill.AnkiFillUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -13,40 +13,33 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class WooordHuntService {
 
+    private final ReversoContextService reversoContextService;
 
     private static final String URL = "https://wooordhunt.ru";
 
     @SneakyThrows
-    public AnkiCard fillAnkiCard(String word) {
+    public AnkiCardDto fillAnkiCard(String word) {
         final Document doc = Jsoup.connect(URL + "/word/" + word).get();
 
-        final AnkiCard ankiCard = new AnkiCard();
-        ankiCard.setWord(word);
+        final AnkiCardDto ankiCardDto = new AnkiCardDto();
+        ankiCardDto.setWord(word);
 
-        ankiCard.setTranscription(
+        ankiCardDto.setTranscription(
                 deletePipeLineFromTranscription(parseTranscription(doc))
         );
 
-        ankiCard.setTranslation(parseTranslate(doc));
+        ankiCardDto.setTranslation(parseTranslate(doc));
 
+        ankiCardDto.setExamples(reversoContextService.getExamples(word));
 
-        final String engExample = deleteENSP(parseEngExample(doc));
-        final String rusExample = deleteENSP(
-                deleteTrigramFromRusExample(parseRusExample(doc))
-        );
-
-        Examples examples = new Examples(engExample, rusExample);
-
-
-        ankiCard.setExamples(examples);
-
-        ankiCard.setSoundURL(
+        ankiCardDto.setSoundURL(
                 AnkiFillUtil.buildSoundURL(URL + parseUrlSound(doc))
         );
 
-        return ankiCard;
+        return ankiCardDto;
     }
 
     private String parseTranscription(Document doc) {
@@ -63,14 +56,6 @@ public class WooordHuntService {
                 .map(Element::text).orElse(null);
     }
 
-    private String parseEngExample(Document doc) {
-        return Optional.ofNullable(doc.getElementsByClass("ex_o").first()).map(Element::text).orElse(null);
-    }
-
-    private String parseRusExample(Document doc) {
-        return Optional.ofNullable(doc.getElementsByClass("ex_t").first()).map(Element::text).orElse(null);
-    }
-
     private String parseUrlSound(Document doc) {
         return Optional.ofNullable(doc.getElementById("audio_uk"))
                 .map(e -> e.getElementsByAttributeValue("type", "audio/mpeg"))
@@ -79,14 +64,5 @@ public class WooordHuntService {
 
     private String deletePipeLineFromTranscription(String transcription) {
         return AnkiFillUtil.isNotNull(transcription) ? transcription.replaceAll("\\|", "") : null;
-    }
-
-    //   без понятия, что это за символ, но выглядит как пробел
-    private String deleteENSP(String field) {
-        return AnkiFillUtil.isNotNull(field) ? field.replaceAll(" ", "") : null;
-    }
-
-    private String deleteTrigramFromRusExample(String example) {
-        return AnkiFillUtil.isNotNull(example) ? example.replaceAll("☰", "") : null;
     }
 }
