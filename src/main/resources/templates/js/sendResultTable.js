@@ -28,6 +28,16 @@ function sendTable() {
         const ankiCard = new AnkiCard(word, transcription, translation, selectEngExample, selectRusExample, soundURL);
 
         ankiCards.push(ankiCard);
+
+        var xhr = new XMLHttpRequest();
+
+        var body = ankiCards;
+
+        xhr.open("POST", '/save', true);
+        xhr.setRequestHeader('Content-Type', 'application/json');
+
+
+        xhr.send(body);
     }
 
 }

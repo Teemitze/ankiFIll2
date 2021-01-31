@@ -3,52 +3,119 @@
 <head>
     <title>Smoke Tests</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <script>
+        function AnkiCard(word, transcription, translation, examples, soundURL) {
+            this.word = word;
+            this.transcription = transcription;
+            this.translation = translation;
+            this.examples = examples;
+            this.soundURL = soundURL;
+        }
+
+        function Examples(engExample, rusExample) {
+            this.engExample = engExample;
+            this.rusExample = rusExample;
+        }
+
+
+        function sendTable() {
+            let cells = document.getElementsByTagName("tr");
+
+            let ankiCards = [];
+
+            for (let i = 1; i < cells.length; i++) {
+                let word = cells[i].getElementsByTagName("td").item(0).innerText;
+                let transcription = cells[i].getElementsByTagName("td").item(1).innerText;
+                let translation = cells[i].getElementsByTagName("td").item(2).getElementsByTagName("input").item(0).value;
+                let engExample = cells[i].getElementsByTagName("td").item(3).getElementsByTagName("option");
+                let selectEngExample = findSelectExample(engExample);
+
+                let rusExamples = cells[i].getElementsByTagName("td").item(4).getElementsByTagName("option");
+                let selectRusExample = findSelectExample(rusExamples);
+
+                let examples = new Examples(selectEngExample, selectRusExample);
+
+
+                let soundURL = cells[i].getElementsByTagName("td").item(5).innerText;
+
+                const ankiCard = new AnkiCard(word, transcription, translation, examples, soundURL);
+
+                console.log(translation);
+
+                ankiCards.push(ankiCard);
+
+                console.log(JSON.stringify(ankiCard));
+            }
+
+            sendRequest(ankiCards)
+
+        }
+
+        function findSelectExample(examples) {
+            for (let i = 0; i < examples.length; i++) {
+                if (examples[i].selected === true) {
+                    return examples[i].innerText;
+                }
+            }
+        }
+
+        function sendRequest(ankiCards) {
+            var xhr = new XMLHttpRequest();
+
+            var body = JSON.stringify(ankiCards);
+
+            xhr.open("POST", '/save', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+
+            xhr.send(body);
+        }
+    </script>
 </head>
 <body>
-<form method="POST" th:action="@{/save}" th:object="${ankiCardsList}">
-    <table border="1px">
-        <thead>
-        <tr>
-            <th>Word</th>
-            <th>Transcription</th>
-            <th>Translate</th>
-            <th>Eng Example</th>
-            <th>Rus Example</th>
-            <th>Sound</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="ankiCard : ${ankiCards}">
-            <td th:text="${ankiCard.word}"></td>
-            <td th:text="${ankiCard.transcription}"></td>
-            <td>
-                <label>
-                    <input th:value="${ankiCard.translation}"/>
-                </label>
-            </td>
-            <td>
-                <label>
-                    <select>
-                        <option th:each="example : ${ankiCard.examples}" th:text="${example.engExample}" th:value="${example.engExample}">
-                        </option>
-                    </select>
-                </label>
-            </td>
+<table border="1px">
+    <thead>
+    <tr>
+        <th>Word</th>
+        <th>Transcription</th>
+        <th>Translate</th>
+        <th>Eng Example</th>
+        <th>Rus Example</th>
+        <th>Sound</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="ankiCard : ${ankiCards}">
+        <td th:text="${ankiCard.word}"></td>
+        <td th:text="${ankiCard.transcription}"></td>
+        <td>
+            <label>
+                <input th:value="${ankiCard.translation}"/>
+            </label>
+        </td>
+        <td>
+            <label>
+                <select>
+                    <option th:each="example : ${ankiCard.examples}" th:text="${example.engExample}"
+                            th:value="${example.engExample}">
+                    </option>
+                </select>
+            </label>
+        </td>
 
-            <td>
-                <label>
-                    <select>
-                        <option th:each="example : ${ankiCard.examples}" th:text="${example.rusExample}" th:value="${example.rusExample}">
-                        </option>
-                    </select>
-                </label>
-            </td>
-            <td th:text="${ankiCard.soundURL}"></td>
-        </tr>
-        </tbody>
-    </table>
-    <br>
-    <input type="submit" value="Save">
-</form>
+        <td>
+            <label>
+                <select>
+                    <option th:each="example : ${ankiCard.examples}" th:text="${example.rusExample}"
+                            th:value="${example.rusExample}">
+                    </option>
+                </select>
+            </label>
+        </td>
+        <td th:text="${ankiCard.soundURL}"></td>
+    </tr>
+    </tbody>
+</table>
+<br>
+<input type="submit" value="Save" onclick="sendTable()">
 </body>
 </html>

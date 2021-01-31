@@ -1,11 +1,15 @@
 package app.ankifill.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.*;
 
-@Getter
-@AllArgsConstructor
+@Data
+@NoArgsConstructor
 public class Examples {
-    private final String engExample;
-    private final String rusExample;
+    private String engExample;
+    private String rusExample;
+
+    public Examples(String engExample, String rusExample) {
+        this.engExample = engExample;
+        this.rusExample = rusExample;
+    }
 }
