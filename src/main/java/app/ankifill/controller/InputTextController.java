@@ -65,9 +65,9 @@ public class InputTextController {
 
     @PostMapping("/save")
     public String save(@ModelAttribute AnkiCardsList ankiCardsList) {
-
+        System.out.println(ankiCardsDto);
         List<AnkiCardDto> ankiCards = ankiCardsList.getAnkiCards();
-        return "result";
+        return "redirect:/result";
     }
 
     private boolean checkAnkiNull(AnkiCardDto ankiCard) {
