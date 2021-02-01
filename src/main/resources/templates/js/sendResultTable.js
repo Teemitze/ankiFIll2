@@ -1,12 +1,15 @@
-function AnkiCard(word, transcription, translation, selectEngExample, selectRusExample, soundURL) {
+function AnkiCard(word, transcription, translation, examples, soundURL) {
     this.word = word;
     this.transcription = transcription;
-    this.translation = transcription;
-    this.selectEngExample = selectEngExample;
-    this.selectRusExample = selectRusExample;
+    this.translation = translation;
+    this.examples = examples;
     this.soundURL = soundURL;
 }
 
+function Examples(engExample, rusExample) {
+    this.engExample = engExample;
+    this.rusExample = rusExample;
+}
 
 
 function sendTable() {
@@ -20,34 +23,37 @@ function sendTable() {
         let translation = cells[i].getElementsByTagName("td").item(2).getElementsByTagName("input").item(0).value;
         let engExample = cells[i].getElementsByTagName("td").item(3).getElementsByTagName("option");
         let selectEngExample = findSelectExample(engExample);
+
         let rusExamples = cells[i].getElementsByTagName("td").item(4).getElementsByTagName("option");
         let selectRusExample = findSelectExample(rusExamples);
 
+        let examples = new Examples(selectEngExample, selectRusExample);
+
+
         let soundURL = cells[i].getElementsByTagName("td").item(5).innerText;
 
-        const ankiCard = new AnkiCard(word, transcription, translation, selectEngExample, selectRusExample, soundURL);
+        const ankiCard = new AnkiCard(word, transcription, translation, examples, soundURL);
 
         ankiCards.push(ankiCard);
-
-        var xhr = new XMLHttpRequest();
-
-        var body = ankiCards;
-
-        xhr.open("POST", '/save', true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-
-
-        xhr.send(body);
     }
-
+    sendRequest(ankiCards);
 }
 
 function findSelectExample(examples) {
     for (let i = 0; i < examples.length; i++) {
         if (examples[i].selected === true) {
-           return examples[i].innerText;
+            return examples[i].innerText;
         }
     }
 }
 
-sendTable();
+function sendRequest(ankiCards) {
+    var xhr = new XMLHttpRequest();
+
+    var body = JSON.stringify(ankiCards);
+
+    xhr.open("POST", '/save', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+
+    xhr.send(body);
+}

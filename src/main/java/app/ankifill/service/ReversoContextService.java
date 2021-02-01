@@ -7,19 +7,24 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class ReversoContextService {
 
-    @SneakyThrows
     public List<Examples> getExamples(String word) {
         final Document doc;
-        doc = Jsoup.connect("https://context.reverso.net/перевод/английский-русский/" + word).get();
-        final List<Element> elementsWithExample = getExamplesElement(doc);
-        return elementsWithExample.stream().map(e -> new Examples(parseEngExample(e), parseRusExample(e))).collect(Collectors.toList());
+        try {
+            doc = Jsoup.connect("https://context.reverso.net/перевод/английский-русский/" + word).get();
+            final List<Element> elementsWithExample = getExamplesElement(doc);
+            return elementsWithExample.stream().map(e -> new Examples(parseEngExample(e), parseRusExample(e))).collect(Collectors.toList());
+        } catch (IOException e) {
+            return Collections.emptyList();
+        }
     }
 
 
