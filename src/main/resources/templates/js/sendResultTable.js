@@ -18,24 +18,25 @@ function sendTable() {
     let ankiCards = [];
 
     for (let i = 1; i < cells.length; i++) {
-        let word = cells[i].getElementsByTagName("td").item(0).innerText;
-        let transcription = cells[i].getElementsByTagName("td").item(1).innerText;
-        let translation = cells[i].getElementsByTagName("td").item(2).getElementsByTagName("input").item(0).value;
-        let engExample = cells[i].getElementsByTagName("td").item(3).getElementsByTagName("option");
+        let word = cells[i].getElementsByTagName("td").item(1).innerText;
+        let transcription = cells[i].getElementsByTagName("td").item(2).innerText;
+        let translation = cells[i].getElementsByTagName("td").item(3).getElementsByTagName("input").item(0).value;
+        let engExample = cells[i].getElementsByTagName("td").item(4).getElementsByTagName("option");
         let selectEngExample = findSelectExample(engExample);
 
-        let rusExamples = cells[i].getElementsByTagName("td").item(4).getElementsByTagName("option");
+        let rusExamples = cells[i].getElementsByTagName("td").item(5).getElementsByTagName("option");
         let selectRusExample = findSelectExample(rusExamples);
 
         let examples = new Examples(selectEngExample, selectRusExample);
 
 
-        let soundURL = cells[i].getElementsByTagName("td").item(5).innerText;
+        let soundURL = cells[i].getElementsByTagName("td").item(6).innerText;
 
         const ankiCard = new AnkiCard(word, transcription, translation, examples, soundURL);
 
         ankiCards.push(ankiCard);
     }
+
     sendRequest(ankiCards);
 }
 
@@ -52,8 +53,9 @@ function sendRequest(ankiCards) {
 
     var body = JSON.stringify(ankiCards);
 
-    xhr.open("POST", '/save', true);
+    xhr.open("POST", '/save', false);
     xhr.setRequestHeader('Content-Type', 'application/json');
 
+    console.log(body)
     xhr.send(body);
 }
