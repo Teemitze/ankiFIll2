@@ -12,4 +12,8 @@ public class AnkiFillUtil {
     public boolean isNotNull(String field) {
         return field != null;
     }
+
+    public String replaceSpace(String word, String replacement) {
+        return word.replaceAll(" ", replacement);
+    }
 }

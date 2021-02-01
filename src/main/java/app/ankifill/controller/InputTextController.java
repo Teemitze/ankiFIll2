@@ -2,18 +2,33 @@ package app.ankifill.controller;
 
 import app.ankifill.model.AnkiCard;
 import app.ankifill.model.AnkiCardDto;
-import app.ankifill.model.AnkiCardsList;
-import app.ankifill.model.Examples;
 import app.ankifill.service.LingualeoClient;
-import app.ankifill.service.ReversoContextService;
 import app.ankifill.service.WooordHuntService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.util.ResourceUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,7 +60,7 @@ public class InputTextController {
 
 
             if (checkAnkiNull(ankiCardDto)) {
-                ankiCardDto = lingualeoClient.fillAnkiCard(word);
+                ankiCardDto = lingualeoClient.fillAnkiCard(word, ankiCardDto);
             }
 
             ankiCardsDto.add(ankiCardDto);
@@ -60,11 +75,21 @@ public class InputTextController {
         return "result";
     }
 
-    @PostMapping("/save")
-    public String save(@RequestBody List<AnkiCard> ankiCards) {
+    @GetMapping("/save")
+    @SneakyThrows
+    public ResponseEntity<Resource> save() {
 
-        System.out.println(ankiCards);
-        return "redirect:/result";
+        File file = ResourceUtils.getFile("result.txt");
+
+
+        Path path = Paths.get(file.getAbsolutePath());
+        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
+
+        return ResponseEntity.ok()
+                .contentLength(file.length())
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + file.getName())
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
     }
 
     private boolean checkAnkiNull(AnkiCardDto ankiCard) {

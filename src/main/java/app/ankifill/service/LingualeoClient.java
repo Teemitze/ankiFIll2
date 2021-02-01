@@ -1,7 +1,6 @@
 package app.ankifill.service;
 
 
-import app.ankifill.model.AnkiCard;
 import app.ankifill.model.AnkiCardDto;
 import app.ankifill.utill.AnkiFillUtil;
 import lombok.SneakyThrows;
@@ -16,10 +15,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class LingualeoClient {
 
-    public AnkiCardDto fillAnkiCard(String word) {
+    public AnkiCardDto fillAnkiCard(String word, AnkiCardDto ankiCard) {
         final JSONObject jsonObject = sendRequest(word);
 
-        final AnkiCardDto ankiCard = new AnkiCardDto();
         ankiCard.setWord(word);
         ankiCard.setTranscription(getTranscriptionFromJSON(jsonObject));
         ankiCard.setTranslation(getTranslationFromJSON(jsonObject));
@@ -34,7 +32,7 @@ public class LingualeoClient {
 
     @SneakyThrows
     private JSONObject sendRequest(String word) {
-        final HttpGet request = new HttpGet("http://api.lingualeo.com/gettranslates?word=" + replaceSpace(word));
+        final HttpGet request = new HttpGet("http://api.lingualeo.com/gettranslates?word=" + AnkiFillUtil.replaceSpace(word, "%20"));
 
         final CloseableHttpResponse response = HttpClients.createDefault().execute(request);
 
@@ -54,9 +52,5 @@ public class LingualeoClient {
 
     private String getSoundUrlFromJSON(JSONObject jsonObject) {
         return jsonObject.getString("sound_url");
-    }
-
-    private String replaceSpace(String word) {
-        return word.replaceAll(" ", "%20");
     }
 }

@@ -44,11 +44,9 @@
 
                 ankiCards.push(ankiCard);
 
-                console.log(JSON.stringify(ankiCard));
+                // console.log(JSON.stringify(ankiCard));
             }
-
-            sendRequest(ankiCards)
-
+            sendRequest(ankiCards);
         }
 
         function findSelectExample(examples) {
@@ -116,6 +114,8 @@
     </tbody>
 </table>
 <br>
-<input type="submit" value="Save" onclick="sendTable()">
+<form action="/save" method="get">
+    <button type="submit">Save</button>
+</form>
 </body>
 </html>
