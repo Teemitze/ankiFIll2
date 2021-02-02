@@ -43,4 +43,20 @@ public class OutputController {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .body(resource);
     }
+
+    @GetMapping("/saveFile")
+    @SneakyThrows
+    public ResponseEntity<Resource> saveFile() {
+        File file = ResourceUtils.getFile("result.csv");
+        Path path = Paths.get(file.getAbsolutePath());
+
+
+        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
+
+        return ResponseEntity.ok()
+                .contentLength(file.length())
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + file.getName())
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
+    }
 }
