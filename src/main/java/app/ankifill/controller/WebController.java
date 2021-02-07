@@ -1,8 +1,11 @@
 package app.ankifill.controller;
 
 import app.ankifill.model.AnkiCard;
+import app.ankifill.model.AnkiCardDto;
+import app.ankifill.service.FillAnkiCardService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -17,14 +20,29 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
+import java.util.stream.Collectors;
 
-@RequestMapping
+@Slf4j
 @RestController
 @RequiredArgsConstructor
-public class OutputController {
-    @PostMapping("/save")
+@RequestMapping
+public class WebController {
+
+    private final FillAnkiCardService fillAnkiCardService;
+
+    @PostMapping("/words")
+    public List<AnkiCardDto> sendAnkiCardsDto(@RequestBody List<String> wordsDto) {
+        final List<String> words = wordsDto.stream().distinct()
+                .map(String::trim).filter(w -> !w.isEmpty())
+                .collect(Collectors.toList());
+
+        return fillAnkiCardService.fillAnkiCards(words);
+    }
+
+
+    @PostMapping("/saveAnkiCards")
     @SneakyThrows
-    public ResponseEntity<Resource> save(@RequestBody List<AnkiCard> ankiCards) {
+    public ResponseEntity<Resource> saveAnkiCards(@RequestBody List<AnkiCard> ankiCards) {
         File file = ResourceUtils.getFile("result.csv");
         file.delete();
         file.createNewFile();

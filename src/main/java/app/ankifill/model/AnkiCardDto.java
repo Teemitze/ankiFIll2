@@ -13,4 +13,5 @@ public class AnkiCardDto {
     private String translation;
     private List<Examples> examples;
     private String soundURL;
+    private boolean ready;
 }

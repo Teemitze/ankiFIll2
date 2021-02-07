@@ -1,0 +1,66 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>AnkiFill</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <script src="js/sendResultTable.js"></script>
+    <link rel="stylesheet" href="/css/result.css">
+</head>
+<body>
+<div id="div_table_words">
+
+</div>
+
+
+<table id="table_words">
+    <thead>
+    <tr>
+        <th class="count">№</th>
+        <th class="word">Word</th>
+        <th class="transcription">Transcription</th>
+        <th class="translation">Translation</th>
+        <th class="engExample">Eng Example</th>
+        <th class="rusExample">Rus Example</th>
+        <th hidden>Sound</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="ankiCard, i : ${ankiCards}">
+        <td th:text="${i.count}" class="count"></td>
+        <td th:text="${ankiCard.word}" class="word"></td>
+        <td th:text="${ankiCard.transcription}" class="transcription"></td>
+        <td class="translation">
+            <label>
+                <input class="translation" th:value="${ankiCard.translation}"/>
+            </label>
+        </td>
+        <td class="engExample">
+            <label>
+                <select class="engExample">
+                    <option th:each="example : ${ankiCard.examples}" th:text="${example.engExample}"
+                            th:value="${example.engExample}" class="engExample">
+                    </option>
+                </select>
+            </label>
+        </td>
+
+        <td class="rusExample">
+            <label>
+                <select class="rusExample">
+                    <option th:each="example : ${ankiCard.examples}" th:text="${example.rusExample}"
+                            th:value="${example.rusExample}" class="rusExample">
+                    </option>
+                </select>
+            </label>
+        </td>
+        <td th:text="${ankiCard.soundURL}" hidden></td>
+    </tr>
+    </tbody>
+</table>
+<br>
+
+<form action="/saveFile" method="get">
+    <input value="Нажми меня" onclick="sendTable()" type="submit">
+</form>
+</body>
+</html>
