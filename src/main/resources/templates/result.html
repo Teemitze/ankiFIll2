@@ -109,7 +109,7 @@
         }
 
         .translation {
-            width: 150px;
+            width: 200px;
         }
 
         .engExample {
@@ -145,7 +145,7 @@
         <td th:text="${ankiCard.transcription}" class="transcription"></td>
         <td class="translation">
             <label>
-                <input th:value="${ankiCard.translation}"/>
+                <input class="translation" th:value="${ankiCard.translation}"/>
             </label>
         </td>
         <td class="engExample">
