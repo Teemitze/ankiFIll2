@@ -3,6 +3,7 @@ package app.ankifill.controller;
 import app.ankifill.model.AnkiCard;
 import app.ankifill.model.AnkiCardDto;
 import app.ankifill.service.FillAnkiCardService;
+import app.ankifill.utill.AnkiFillUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -42,24 +43,16 @@ public class WebController {
 
     @PostMapping("/saveAnkiCards")
     @SneakyThrows
-    public ResponseEntity<Resource> saveAnkiCards(@RequestBody List<AnkiCard> ankiCards) {
+    public void saveAnkiCards(@RequestBody List<AnkiCard> ankiCards) {
         File file = ResourceUtils.getFile("result.csv");
         file.delete();
         file.createNewFile();
         Path path = Paths.get(file.getAbsolutePath());
 
         for (AnkiCard ankiCard : ankiCards) {
+            ankiCard.setSoundURL(AnkiFillUtil.buildSoundURL(ankiCard.getSoundURL()));
             Files.write(path, ankiCard.toString().getBytes(), StandardOpenOption.APPEND);
         }
-
-
-        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));
-
-        return ResponseEntity.ok()
-                .contentLength(file.length())
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + file.getName())
-                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .body(resource);
     }
 
     @GetMapping("/saveFile")

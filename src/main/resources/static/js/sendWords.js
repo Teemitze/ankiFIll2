@@ -18,10 +18,35 @@ function sendWords() {
     let response = sendWordsFromTextArea.response;
     deleteSendWordsForm();
     createTable(response);
+    createSaveFileForm();
+
+    createMainButton();
 }
 
 function deleteSendWordsForm() {
     document.querySelector("#sendWordsForm").remove();
+}
+
+function createSaveFileForm() {
+    let form = `<form action="/saveFile" method="get">
+                    <input value="Сохранить" onclick="sendTable()" type="submit">
+                </form>`;
+
+
+    document.getElementById("saveFileForm").innerHTML = form;
+}
+
+function createMainButton() {
+    let button = `<button onclick="location.reload()">На главную</button>`
+    document.getElementById("redirectMain").innerHTML = button;
+}
+
+function createSoundPlayer(word, soundUrl) {
+    let player = `<span class="soundIcon" style="float: right">
+                    <audio id="${word}" src="${soundUrl}"></audio>
+                    <img src="images/voise.png" width="25px" onclick="document.getElementById('${word}').play()">
+                  </span>`
+    return player;
 }
 
 function createTable(ankiCards) {
@@ -50,7 +75,11 @@ function createTable(ankiCards) {
         table += `<tr>
                           <td class="count">${count}</td>
                           <td class="word">${ankiCard.word}</td>
-                          <td class="transcription">${ankiCard.transcription}</td>
+                          <td class="transcription">${ankiCard.transcription}`
+
+        table += createSoundPlayer(ankiCard.word, ankiCard.soundURL);
+
+        table += `</td>
                           <td class="translation">
                             <input class="translation" value="${ankiCard.translation}"/>
                           </td>`;

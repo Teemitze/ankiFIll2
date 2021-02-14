@@ -35,9 +35,7 @@ public class WooordHuntService {
 
         ankiCardDto.setExamples(reversoContextService.getExamples(word));
 
-        ankiCardDto.setSoundURL(
-                AnkiFillUtil.buildSoundURL(URL + parseUrlSound(doc))
-        );
+        ankiCardDto.setSoundURL(URL + parseUrlSound(doc));
 
         return ankiCardDto;
     }

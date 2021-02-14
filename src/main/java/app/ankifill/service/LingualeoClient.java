@@ -22,9 +22,7 @@ public class LingualeoClient {
         ankiCard.setTranscription(getTranscriptionFromJSON(jsonObject));
         ankiCard.setTranslation(getTranslationFromJSON(jsonObject));
 
-        ankiCard.setSoundURL(AnkiFillUtil.buildSoundURL(
-                getSoundUrlFromJSON(jsonObject))
-        );
+        ankiCard.setSoundURL(getSoundUrlFromJSON(jsonObject));
 
         return ankiCard;
     }
