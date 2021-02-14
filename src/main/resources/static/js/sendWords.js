@@ -49,6 +49,11 @@ function createSoundPlayer(word, soundUrl) {
     return player;
 }
 
+function deleteRow(r) {
+    var i = r.parentNode.parentNode.rowIndex;
+    document.getElementById("table_words").deleteRow(i);
+}
+
 function createTable(ankiCards) {
     let ankiCardsJson = JSON.parse(ankiCards);
 
@@ -107,6 +112,8 @@ function createTable(ankiCards) {
             table += `<option value="${example.rusExample}" class="rusExample">${example.rusExample}</option>`
         }
         table += `</select>`;
+        table += `<img style="float: right" src="images/close.png" width="20px" alt="удалить ряд" onclick="deleteRow(this)"/>`;
+
         table += `</td>`;
 
         table += `<td hidden>${ankiCard.soundURL}</td>`;
