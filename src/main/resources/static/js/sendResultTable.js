@@ -53,7 +53,7 @@ function sendRequest(ankiCards) {
 
     var body = JSON.stringify(ankiCards);
 
-    xhr.open("POST", '/save', false);
+    xhr.open("POST", '/saveAnkiCards', false);
     xhr.setRequestHeader('Content-Type', 'application/json');
 
     console.log(body)

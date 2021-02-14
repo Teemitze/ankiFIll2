@@ -3,86 +3,89 @@ function getWords() {
     return textarea.split('\n');
 }
 
-function createTable() {
+function sendWords() {
     let words = getWords();
 
-    console.log(words);
+    let sendWordsFromTextArea = new XMLHttpRequest();
 
-    // window.location.replace("/result.html");
+    let body = JSON.stringify(words);
+
+    sendWordsFromTextArea.open("POST", '/words', false);
+    sendWordsFromTextArea.setRequestHeader('Content-Type', 'application/json');
+
+    sendWordsFromTextArea.send(body);
+
+    let response = sendWordsFromTextArea.response;
+    deleteSendWordsForm();
+    createTable(response);
+}
+
+function deleteSendWordsForm() {
+    document.querySelector("#sendWordsForm").remove();
+}
+
+function createTable(ankiCards) {
+    let ankiCardsJson = JSON.parse(ankiCards);
+
+    let table = "<table id=\"table_words\">";
+
+    table += "    <thead>\n" +
+        "    <tr>\n" +
+        "        <th class=\"count\">№</th>\n" +
+        "        <th class=\"word\">Word</th>\n" +
+        "        <th class=\"transcription\">Transcription</th>\n" +
+        "        <th class=\"translation\">Translation</th>\n" +
+        "        <th class=\"engExample\">Eng Example</th>\n" +
+        "        <th class=\"rusExample\">Rus Example</th>\n" +
+        "        <th hidden>Sound</th>\n" +
+        "    </tr>\n" +
+        "    </thead>" +
+        "<tbody>";
 
 
+    for (let i = 0; i < ankiCardsJson.length; i++) {
+        let ankiCard = ankiCardsJson[i];
+        let count = i + 1;
 
-    window.addEventListener("load", function () {
-        let ankiCardsJson = JSON.parse(sendWords(words));
-
-        let table = "<table id=\"table_words\">";
-
-        table += "    <thead>\n" +
-            "    <tr>\n" +
-            "        <th class=\"count\">№</th>\n" +
-            "        <th class=\"word\">Word</th>\n" +
-            "        <th class=\"transcription\">Transcription</th>\n" +
-            "        <th class=\"translation\">Translation</th>\n" +
-            "        <th class=\"engExample\">Eng Example</th>\n" +
-            "        <th class=\"rusExample\">Rus Example</th>\n" +
-            "        <th hidden>Sound</th>\n" +
-            "    </tr>\n" +
-            "    </thead>" +
-            "<tbody>";
-
-
-        console.log(table);
-
-        ankiCardsJson.forEach(function (ankiCard, i) {
-            table += `<tr>
-                          <td class="count">${i}</td>
+        table += `<tr>
+                          <td class="count">${count}</td>
                           <td class="word">${ankiCard.word}</td>
                           <td class="transcription">${ankiCard.transcription}</td>
                           <td class="translation">
                             <input class="translation" value="${ankiCard.translation}"/>
                           </td>`;
 
+        table += `<td class="engExample">`;
+        table += ` <select class="engExample">`;
 
-            let examples = ankiCard.examples;
+
+        for (let a = 0; a < ankiCard.examples.length; a++) {
+            let example = ankiCard.examples[a];
+
+            table += `<option value="${example.engExample}" class="engExample">${example.engExample}</option>`
+        }
+        table += `</select>`;
+        table += `</td>`;
 
 
-            for (let example in examples) {
-                table += `<td class="engExample">
-                            <select class="engExample">
-                                <option value="${example.engExample}" class="engExample"></option>
-                            </select>
-                          </td>`;
+        table += `<td class="rusExample">`;
+        table += ` <select class="rusExample">`;
 
-                table += `<td class="rusExample">
-                            <select class="rusExample">
-                                <option value="${example.rusExample}" class="rusExample"></option>
-                            </select>
-                          </td>`
-            }
 
-            table += `<td class="transcription">${ankiCard.soundURL} hidden</td>`;
+        for (let a = 0; a < ankiCard.examples.length; a++) {
+            let example = ankiCard.examples[a];
 
-            table += "</tbody>";
-            table += "</table>";
-        })
-        document.getElementById("div_table_words").innerHTML = table;
+            table += `<option value="${example.rusExample}" class="rusExample">${example.rusExample}</option>`
+        }
+        table += `</select>`;
+        table += `</td>`;
 
-        console.log(table);
-    });
+        table += `<td hidden>${ankiCard.soundURL}</td>`;
+    }
+
+
+    table += "</tbody>";
+    table += "</table>";
+
+    document.getElementById("div_table_words").innerHTML = table;
 }
-
-
-function sendWords(words) {
-    let xhr = new XMLHttpRequest();
-
-    let body = JSON.stringify(words);
-
-    xhr.open("POST", '/words', false);
-    xhr.setRequestHeader('Content-Type', 'application/json');
-
-    xhr.send(body);
-
-    return xhr.response;
-}
-
-createTable();
